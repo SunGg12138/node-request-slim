@@ -15,7 +15,7 @@ const FormData = require('form-data');
  * pipe 设置响应文件的pipe
 */
 function request(options, callback) {
-  let { url, form, body, stream, method, headers, timeout, pipe } = options;
+  let { url, form, body, stream, formData, method, headers, timeout, pipe } = options;
 
   method = method || 'GET';
   headers = headers || {};
@@ -23,23 +23,27 @@ function request(options, callback) {
   let writeData, pipeData;
 
   if (form) {
+    // application/x-www-form-urlencoded提交
     if (typeof form === 'object') {
       headers['content-type'] = 'application/x-www-form-urlencoded';
       form = querystring.stringify(form);
     }
     writeData = form;
   } else if (body) {
+    // application/json提交
     if (typeof body === 'object') {
       headers['content-type'] = 'application/json';
       body = JSON.stringify(body);
     }
     writeData = body;
-  } else if (stream) {
+  } else if (stream || formData) {
+    let obj = stream || formData;
+    // 提交multipart/form-data数据流
     let form = new FormData();
-    for (let key in stream) {
-      form.append(key, stream[key]);
+    for (let key in obj) {
+      form.append(key, obj[key]);
     }
-    headers = form.getHeaders();
+    headers = Object.assign(headers, form.getHeaders());
     pipeData = form;
   }
 
@@ -76,7 +80,6 @@ function request(options, callback) {
         data += chunk.toString();
       });
     }
-
     // 响应结束事件
     res.on('end', () => {
       switch (contentType) {
@@ -104,7 +107,6 @@ function request(options, callback) {
   // pipe上传文件
   if (pipeData) {
     pipeData.pipe(req);
-    pipeData.pipe(req, {end: false});
     pipeData.on('end', function(){
       req.end();
     });

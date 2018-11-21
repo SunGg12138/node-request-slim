@@ -37,6 +37,13 @@ router.post('/post/upload', upload.single('avatar'), async ctx => {
       ctx.body = { success: false };
   }
 });
+router.post('/post/formData', upload.single('avatar'), async ctx => {
+  if (ctx.req.file && ctx.req.body){
+      ctx.body = { success: true, data: ctx.req.body };
+  } else {
+      ctx.body = { success: false };
+  }
+});
 router.get('/headers', async function(ctx){
   ctx.body = ctx.headers;
 });
