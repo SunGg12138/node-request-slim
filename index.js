@@ -25,14 +25,20 @@ function request(options, callback) {
   if (form) {
     // application/x-www-form-urlencoded提交
     if (typeof form === 'object') {
-      headers['content-type'] = 'application/x-www-form-urlencoded';
+      // 用户自己设置了content-type，这里不做修改
+      if (!headers['content-type'] && !headers['Content-Type']) {
+        headers['content-type'] = 'application/x-www-form-urlencoded';
+      }
       form = querystring.stringify(form);
     }
     writeData = form;
   } else if (body) {
     // application/json提交
     if (typeof body === 'object') {
-      headers['content-type'] = 'application/json';
+      // 用户自己设置了content-type，这里不做修改
+      if (!headers['content-type'] && !headers['Content-Type']) {
+        headers['content-type'] = 'application/json';
+      }
       body = JSON.stringify(body);
     }
     writeData = body;
@@ -43,7 +49,10 @@ function request(options, callback) {
     for (let key in obj) {
       form.append(key, obj[key]);
     }
-    headers = Object.assign(headers, form.getHeaders());
+    // 用户自己设置了content-type，这里不做修改
+    if (!headers['content-type'] && !headers['Content-Type']) {
+      headers = Object.assign(headers, form.getHeaders());
+    }
     pipeData = form;
   }
 
