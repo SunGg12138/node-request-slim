@@ -23,22 +23,22 @@ function request(options, callback) {
   let writeData, pipeData;
 
   if (form) {
+    // 用户自己设置了content-type，这里不做修改
+    if (!headers['content-type'] && !headers['Content-Type']) {
+      headers['content-type'] = 'application/x-www-form-urlencoded';
+    }
     // application/x-www-form-urlencoded提交
     if (typeof form === 'object') {
-      // 用户自己设置了content-type，这里不做修改
-      if (!headers['content-type'] && !headers['Content-Type']) {
-        headers['content-type'] = 'application/x-www-form-urlencoded';
-      }
       form = querystring.stringify(form);
     }
     writeData = form;
   } else if (body) {
+    // 用户自己设置了content-type，这里不做修改
+    if (!headers['content-type'] && !headers['Content-Type']) {
+      headers['content-type'] = 'application/json';
+    }
     // application/json提交
     if (typeof body === 'object') {
-      // 用户自己设置了content-type，这里不做修改
-      if (!headers['content-type'] && !headers['Content-Type']) {
-        headers['content-type'] = 'application/json';
-      }
       body = JSON.stringify(body);
     }
     writeData = body;
