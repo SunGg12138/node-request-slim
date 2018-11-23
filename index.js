@@ -1,4 +1,6 @@
 const http = require('http');
+const https = require('https');
+const protocol_http = { 'http:': http, 'https:': https };
 const { URL } = require('url');
 const mime = require('mime-types');
 const querystring = require('querystring');
@@ -74,17 +76,21 @@ function request(options, callback) {
     headers: headers,
     timeout: timeout || null
   };
+
+  // http还是https
+  let http = protocol_http[request_URL.protocol];
+
   // 发送请求
   let req = http.request(request_options, function (res) {
     let data = '';
-
-    res.setEncoding('utf8');
     
     // 获取响应头的content-type信息
     let contentType = mime.extension(res.headers['content-type']);
-    if (contentType === 'bin' && pipe) {
+
+    if (pipe) {
       res.pipe(pipe);
     } else {
+      res.setEncoding('utf8');
       res.on('data', (chunk) => {
         data += chunk.toString();
       });
@@ -98,12 +104,6 @@ function request(options, callback) {
             data = JSON.parse(data);
           } catch (error) { }
           break;
-        // 如果是数据流并且在上面已经pipe了，这里就直接执行回调就可以了
-        case 'bin':
-          if (pipe) {
-            callback && callback(null, res);
-            return;
-          }
       }
       callback && callback(null, res, data);
     });

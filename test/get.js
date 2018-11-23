@@ -24,10 +24,19 @@ describe('GET', function(){
       done();
     });
   });
+  it('发送GET请求，获取图片数据，使用pipe', function(done){
+    let writeStream = fs.createWriteStream(__dirname + '/file_test/get_file.png');
+    request({ url: 'https://qiniu.staticfile.org/static/images/qiniu_logo.5249e634.png', pipe: writeStream }, function(err, res, body){
+      let isExists = fs.existsSync(__dirname + '/file_test/get_file.png');
+      expect(isExists).to.be.ok;
+      done();
+    });
+  });
   it('发送GET请求，获取文件数据，使用pipe', function(done){
     let writeStream = fs.createWriteStream(__dirname + '/file_test/get_file.js');
     request({ url: common.base_url + '/get/file', pipe: writeStream }, function(err, res, body){
-      expect(body).to.be.a('undefined');
+      let isExists = fs.existsSync(__dirname + '/file_test/get_file.js');
+      expect(isExists).to.be.ok;
       done();
     });
   });

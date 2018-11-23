@@ -1,4 +1,4 @@
 node_modules/
 uploads/
 .DS_Store
-get_file.js
+file_test/
