@@ -1,6 +1,6 @@
 {
   "name": "node-request-slim",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -21,6 +21,7 @@
     "koa-router": "7.4.0"
   },
   "dependencies": {
+    "debug": "^4.1.0",
     "form-data": "^2.3.3",
     "mime-types": "^2.1.21"
   }

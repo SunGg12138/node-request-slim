@@ -17,7 +17,7 @@ describe('GET', function(){
     });
   });
   it('发送GET请求，使用query请求', function(done){
-    request({ url: common.base_url + '/get/json?a=1&b=2' }, function(err, res, body){
+    request({ url: common.base_url + '/get/json?a=1', query: { b: 2 } }, function(err, res, body){
       expect(body).to.be.an('object');
       expect(body.a === '1').to.be.ok;
       expect(body.b === '2').to.be.ok;
