@@ -47,4 +47,20 @@ describe('POST', function(){
       done();
     });
   });
+
+  it('发送POST请求，outputBuffer', function(done){
+    request({
+      url: common.base_url + '/post/formData',
+      method: 'POST',
+      formData: {
+        a: '1',
+        b: '2',
+        avatar: fs.createReadStream(__filename)
+      },
+      outputBuffer: true
+    }, function(err, res, body){
+      expect(Buffer.isBuffer(body)).to.be.ok;
+      done();
+    });
+  });
 });

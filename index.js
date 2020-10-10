@@ -18,6 +18,7 @@ const FormData = require('form-data');
  * @param {Stream} options.stream 可选，发送文件流
  * @param {Object} options.headers 可选，设置请求头信息，如果指定content-type，就不会被修改
  * @param {Stream} options.pipe 可选，如果指定pipe会直接把响应信息pipe到指定流里面
+ * @param {Boolean} options.outputBuffer 可选，是否输出buffer数据
  * @param {Number} timeout 可选，设置超时时间，默认超时时间60秒
 */
 function request(options, callback) {
@@ -29,7 +30,7 @@ function request(options, callback) {
   if (!options.url) return callback('options.url is required');
 
   // 解析参数
-  let { url, method, query, form, body, formData, stream, headers, pipe, timeout } = options;
+  let { url, method, query, form, body, formData, stream, headers, pipe, outputBuffer, timeout } = options;
 
   // 设定默认值
   method = method || 'GET';
@@ -114,6 +115,13 @@ function request(options, callback) {
     if (pipe) {
       // 设置pipe会直接把响应信息pipe到指定流里面
       res.pipe(pipe);
+    }
+    // 指定输出buffer数据
+    else if (outputBuffer) {
+      data = [];
+      res.on('data', (chunk) => {
+        data.push(chunk);
+      });
     } else {
       data = '';
       res.setEncoding('utf8');
@@ -124,11 +132,16 @@ function request(options, callback) {
 
     // 监听响应结束事件
     res.on('end', () => {
-      // 响应的JSON数据会执行JSON.parse
-      if (data && contentType === 'json') {
-        try {
-          data = JSON.parse(data);
-        } catch (error) {}
+      if (data) {
+        if (outputBuffer) {
+          data = Buffer.concat(data);
+        } 
+        // 响应的JSON数据会执行JSON.parse
+        else if (contentType === 'json') {
+          try {
+            data = JSON.parse(data);
+          } catch (error) {}
+        }
       }
       // 回调函数
       callback && callback(null, res, data);

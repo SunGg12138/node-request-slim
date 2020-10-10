@@ -29,6 +29,7 @@ $ mocha
  * @param {Stream} options.stream 可选，发送文件流
  * @param {Object} options.headers 可选，设置请求头信息，如果指定content-type，就不会被修改
  * @param {Stream} options.pipe 可选，如果指定pipe会直接把响应信息pipe到指定流里面
- * @param {Number} timeout 可选，设置超时时间
+ * @param {Boolean} options.outputBuffer 可选，是否输出buffer数据
+ * @param {Number} timeout 可选，设置超时时间，默认超时时间60秒
 */
 ```
